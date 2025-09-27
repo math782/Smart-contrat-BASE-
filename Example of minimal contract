@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+contract MonContrat {
+    address public owner;
+    string public message;
+
+    // On définit l’owner au moment du déploiement
+    constructor(string memory _message) {
+        owner = msg.sender;
+        message = _message;
+    }
+
+    // Fonction pour modifier le message
+    function setMessage(string memory _newMessage) public {
+        require(msg.sender == owner, "Seulement le owner peut modifier");
+        message = _newMessage;
+    }
+}
