@@ -3,17 +3,30 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract crx is ERC721 {
+contract crixxus is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("nftcrixxuxs", "crx") {}
+    uint256 public mintPrice = 0.0001 ether;
 
-    function mintNFT(address recipient) public returns (uint256) {
+    
+    constructor() ERC721("nftcrixxus", "CRX") Ownable(msg.sender) {}
+
+    
+    function mintNFT() public payable returns (uint256) {
+        require(msg.value >= mintPrice, "ETH insuffisant pour mint");
         _tokenIds.increment();
         uint256 newId = _tokenIds.current();
-        _mint(recipient, newId);
+        _mint(msg.sender, newId);
         return newId;
+    }
+
+   
+    function withdraw() public onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "Rien a retirer");
+        payable(owner()).transfer(balance);
     }
 }
